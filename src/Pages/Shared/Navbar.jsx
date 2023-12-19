@@ -1,7 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.svg";
+import { useContext } from "react";
+import { AuthContext } from "../../providres/AuthProvider";
 
 const Navbar = () => {
+  const { user, logOut } = useContext(AuthContext);
+  const nevigate = useNavigate();
+
   const links = (
     <>
       <li>
@@ -11,7 +16,7 @@ const Navbar = () => {
         <Link to="/about">About</Link>
       </li>
       <li>
-        <Link to="/survices">Survices</Link>
+        <Link to="/survices">Services</Link>
       </li>
       <li>
         <Link to="/blog">Blog</Link>
@@ -21,6 +26,16 @@ const Navbar = () => {
       </li>
     </>
   );
+  const handleLogOut = () => {
+    logOut()
+      .then((result) => {
+        console.log(result);
+        nevigate('/login')
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   return (
     <div className="h-28">
@@ -58,7 +73,25 @@ const Navbar = () => {
           <ul className="menu menu-horizontal px-1">{links}</ul>
         </div>
         <div className="navbar-end">
-          <a className="btn btn-outline btn-error">Appoinment</a>
+          <a className="btn btn-outline btn-error mr-4">Appoinment</a>
+          {user ? (
+            <>
+              {" "}
+              <p className="mr-5">{user.displayName}</p>
+              <img
+                className="w-12 rounded-full mr-5"
+                src={user.photoURL}
+                alt=""
+              />
+              <button className="btn btn-error" onClick={handleLogOut}>
+                SignOut
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="btn btn-primary btn-outline">
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </div>
